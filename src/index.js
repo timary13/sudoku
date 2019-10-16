@@ -4,6 +4,7 @@ module.exports = function solveSudoku(matrix) {
     initial();
     getSolution();
 
+    //copy matrix and make sets where cell = 0
     function initial() {
         //add sets for empty cell
         for (let i = 0; i < 9; i++) {
@@ -44,13 +45,15 @@ module.exports = function solveSudoku(matrix) {
         return nums;
     };
 
+    //contain nums in row, col and sector
     function aroundNums(i, j) {
         let tempArr = [];
-        tempArr.concat(rowNums(i),colNums(j), sectNums(i, j));
+        tempArr.concat(rowNums(i), colNums(j), sectNums(i, j));
         let aroundSet = new Set(tempArr);
         return aroundSet;
     }
 
+    //no one cell with zero?
     function isSolved(mattr) {
         let zeroCell = 0;
         for (let i = 0; i < 9; i++) {
@@ -75,6 +78,7 @@ module.exports = function solveSudoku(matrix) {
         console.log(solved);
     }
 
+    //control changing ? solve : return
     function changing() {
         let changed = 0;
         for (let i = 0; i < 9; i++) {
@@ -89,15 +93,10 @@ module.exports = function solveSudoku(matrix) {
         return changed;
     }
 
+    //find suggesting solution for cell
     function solve(i, j) {
-
         //check in row, column and sector
-        //solved[i][j] = setIntersection(rowNums(i), solved[i][j]);
-        //solved[i][j] = setIntersection(colNums(j), solved[i][j]);
-        //solved[i][j] = setIntersection(sectNums(i, j), solved[i][j]);
         solved[i][j] = setIntersection(aroundNums(i, j), solved[i][j]);
-        //console.log("size ar2: " +solved[i][j].size);
-
         if (solved[i][j].size == 1) {
             for (let item of solved[i][j]) {
                 solved[i][j] = item;
@@ -109,12 +108,14 @@ module.exports = function solveSudoku(matrix) {
         return 0;
     }
 
+    //when main cicle didn't help
     function setRandom() {
         let temp_matrix = [];
         let temp_i = -1;
         let temp_j = -1;
         let countRand = 0;
 
+        //get index with minimal set
         for (let i = 0; i < 9; i++) {
             temp_matrix[i] = [];
             for (let j = 0; j < 9; j++) {
@@ -127,6 +128,7 @@ module.exports = function solveSudoku(matrix) {
             }
         }
 
+        //run solving with suggesting num
         for (let item of solved) {
             temp_matrix[temp_i][temp_j] = item;
             let sudoku = new solveSudoku(temp_matrix);
@@ -141,6 +143,7 @@ module.exports = function solveSudoku(matrix) {
         }
     }
 
+    //main cicle
     function getSolution() {
         //count of changed cells
         //first call = 0
